@@ -1,14 +1,23 @@
+import _ from 'lodash';
 import { asyncMw } from 'express-asyncmw';
 import { predict } from 'utils/predict';
 
 export const predictsMw = asyncMw(async (req, res, next) => {
+  if (_.isEmpty(req.body.reviews)) {
+    return res.status(400).send();
+  }
+
   req.predicts = await predict(req.body.reviews);
 
   return next();
 });
 
 export const predictMw = asyncMw(async (req, res, next) => {
-  req.predicts = await predict(req.body.review);
+  if (_.isEmpty(req.body.review)) {
+    return res.status(400).send();
+  }
+
+  req.predicts = [await predict(req.body.review)];
 
   return next();
 });
