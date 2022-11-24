@@ -8,31 +8,32 @@ import {
   InputRightElement,
   FormLabel,
   Stack,
-  useColorModeValue,
+  useBreakpointValue,
 } from '@chakra-ui/react';
 import { FaTimes } from 'react-icons/fa';
 import Form from './Form';
-import { chakraColor } from '../utils/theme';
+import useDarkModeColor from '../hooks/useDarkModeColor';
 
-const ReviewFields = ({ results, onSubmit, isLoading, reviewsRef }: Props) => {
+const ReviewFields = ({
+  results,
+  onSubmit,
+  isLoading,
+  isInField,
+  reviewsRef,
+}: Props) => {
   const [, setRefresher] = useState<boolean>(false);
-  const borderColor = useColorModeValue(
-    chakraColor('gray', '200'),
-    chakraColor('gray', '700')
-  );
-  const labelColor = useColorModeValue(
-    chakraColor('gray', '600'),
-    chakraColor('gray', '300')
-  );
-  const textInputColor = useColorModeValue(
-    chakraColor('gray', '700'),
-    chakraColor('gray', '300')
-  );
+  const isInMd = useBreakpointValue({
+    base: false,
+    md: true,
+  });
+  const { borderColor, labelColor, textInputColor } = useDarkModeColor();
 
   return (
     <Stack
       rowGap={2}
-      width={_.size(results) ? '50%' : '100%'}
+      width={
+        _.size(results) ? (isInMd ? '50%' : isInField ? '100%' : '0%') : '100%'
+      }
       transition={'all 0.3s ease-in-out'}
       border={`1px solid ${borderColor}`}
       borderRadius={10}
@@ -96,6 +97,7 @@ type Props = {
   results: TLR.PredictionResponse;
   onSubmit: (e: React.FormEvent) => Promise<void>;
   isLoading: boolean;
+  isInField: boolean;
   reviewsRef: React.MutableRefObject<React.RefObject<HTMLInputElement>[]>;
 };
 

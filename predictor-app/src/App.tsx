@@ -7,24 +7,25 @@ import {
   Stack,
   Text,
   useColorMode,
-  useColorModeValue,
+  useBreakpointValue,
 } from '@chakra-ui/react';
 import axios from './utils/axios';
 import ReviewFields from './components/ReviewFields';
 import ReviewResult from './components/ReviewResult';
-import { chakraColor } from './utils/theme';
+import useDarkModeColor from './hooks/useDarkModeColor';
 
 function App() {
   const reviewsRef = useRef<React.RefObject<HTMLInputElement>[]>([createRef()]);
   const [results, setResults] = useState<TLR.PredictionResponse>({});
   const [reviews, setReviews] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isInField, setIsInField] = useState<boolean>(false);
+  const isInMd = useBreakpointValue({
+    base: false,
+    md: true,
+  });
   const { colorMode, toggleColorMode } = useColorMode();
-  const colorToggleColor = useColorModeValue('gray.500', 'gray.300');
-  const labelColor = useColorModeValue(
-    chakraColor('gray', '200'),
-    chakraColor('gray', '700')
-  );
+  const { labelColor, colorToggleColor } = useDarkModeColor();
 
   const onSubmit = async (e: React.FormEvent) => {
     setIsLoading(true);
@@ -51,6 +52,7 @@ function App() {
       );
       setReviews(reviews);
       setResults(results);
+      setIsInField(false);
     } catch {
       setResults({});
     } finally {
@@ -100,18 +102,43 @@ function App() {
         spacing={4}
         direction={'row'}
       >
-        <ReviewFields
-          isLoading={isLoading}
-          onSubmit={onSubmit}
-          results={results}
-          reviewsRef={reviewsRef}
-        />
-        {_.size(results) && (
-          <ReviewResult
-            setResults={setResults}
-            reviews={reviews}
-            results={results}
-          />
+        {isInMd ? (
+          <React.Fragment>
+            <ReviewFields
+              isInField={isInField}
+              isLoading={isLoading}
+              onSubmit={onSubmit}
+              results={results}
+              reviewsRef={reviewsRef}
+            />
+            {_.size(results) ? (
+              <ReviewResult
+                setIsInField={setIsInField}
+                setResults={setResults}
+                reviews={reviews}
+                results={results}
+              />
+            ) : null}
+          </React.Fragment>
+        ) : (
+          <React.Fragment>
+            {isInField ? (
+              <ReviewFields
+                isInField={isInField}
+                isLoading={isLoading}
+                onSubmit={onSubmit}
+                results={results}
+                reviewsRef={reviewsRef}
+              />
+            ) : (
+              <ReviewResult
+                setIsInField={setIsInField}
+                setResults={setResults}
+                reviews={reviews}
+                results={results}
+              />
+            )}
+          </React.Fragment>
         )}
       </Stack>
     </Stack>

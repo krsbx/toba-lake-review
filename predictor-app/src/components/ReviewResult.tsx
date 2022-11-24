@@ -1,23 +1,31 @@
 import _ from 'lodash';
 import React from 'react';
-import { Button, Flex, Stack, Text, useColorModeValue } from '@chakra-ui/react';
-import { chakraColor } from '../utils/theme';
+import {
+  Button,
+  Flex,
+  Stack,
+  Text,
+  useBreakpointValue,
+} from '@chakra-ui/react';
 import { RESULT } from '../utils/constant';
+import useDarkModeColor from '../hooks/useDarkModeColor';
 
-const ReviewResult = ({ results, setResults, reviews }: Props) => {
-  const borderColor = useColorModeValue(
-    chakraColor('gray', '200'),
-    chakraColor('gray', '700')
-  );
-  const labelColor = useColorModeValue(
-    chakraColor('gray', '600'),
-    chakraColor('gray', '300')
-  );
+const ReviewResult = ({
+  results,
+  setResults,
+  setIsInField,
+  reviews,
+}: Props) => {
+  const isInMd = useBreakpointValue({
+    base: false,
+    md: true,
+  });
+  const { borderColor, labelColor } = useDarkModeColor();
 
   return (
     <Stack
       rowGap={2}
-      width={'50%'}
+      width={_.size(results) ? (isInMd ? '50%' : '100%') : '100%'}
       transition={'all 0.3s ease-in-out'}
       border={`1px solid ${borderColor}`}
       borderRadius={10}
@@ -44,7 +52,14 @@ const ReviewResult = ({ results, setResults, reviews }: Props) => {
           ))}
         </Stack>
         <Stack rowGap={2}>
-          <Button onClick={() => setResults({})}>Clean Results</Button>
+          <Button
+            onClick={() => {
+              setResults({});
+              setIsInField(true);
+            }}
+          >
+            Clean Results
+          </Button>
         </Stack>
       </Flex>
     </Stack>
@@ -53,6 +68,7 @@ const ReviewResult = ({ results, setResults, reviews }: Props) => {
 
 type Props = {
   setResults: React.Dispatch<React.SetStateAction<TLR.PredictionResponse>>;
+  setIsInField: React.Dispatch<React.SetStateAction<boolean>>;
   results: TLR.PredictionResponse;
   reviews: string[];
 };
