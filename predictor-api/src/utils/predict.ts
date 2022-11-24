@@ -23,23 +23,12 @@ export const predict = <Result extends TLR.PredictionResult>(
           return;
         }
 
-        if (typeof output[0] === 'string') {
-          if (reviews.length === 1) {
-            resolve([output[0].replace(/'/g, '')] as unknown as Result[]);
-            return;
-          }
-
-          resolve(
-            output[0]
-              .replace(/'/g, '')
-              .slice(1, [].length - 1)
-              .split(',')
-              .map(($1) => $1.replace(' ', '')) as Result[]
-          );
+        if (Array.isArray(output)) {
+          resolve(output);
           return;
         }
 
-        resolve(output);
+        resolve([output]);
       }
     );
   });

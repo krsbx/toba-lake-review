@@ -17,7 +17,7 @@ export const predictMw = asyncMw(async (req, res, next) => {
     return res.status(400).send();
   }
 
-  req.predicts = [await predict(req.body.review)];
+  req.predicts = await predict(req.body.review);
 
   return next();
 });

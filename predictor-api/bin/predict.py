@@ -33,6 +33,6 @@ predicter = Predictor(model, tfidf)
 if __name__ == '__main__':
     if (len(sys.argv[1:]) > 1):
         results = [predicter.predict([arg]) for arg in sys.argv[1:]]
-        print(results)
+        [print(result) for result in results]
     else:
         print(predicter.predict([sys.argv[1]]))
