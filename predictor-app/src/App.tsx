@@ -19,7 +19,7 @@ function App() {
   const [results, setResults] = useState<TLR.PredictionResponse>({});
   const [reviews, setReviews] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isInField, setIsInField] = useState<boolean>(false);
+  const [isInField, setIsInField] = useState<boolean>(true);
   const isInMd = useBreakpointValue({
     base: false,
     md: true,
